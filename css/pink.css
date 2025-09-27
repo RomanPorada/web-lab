@@ -1,0 +1,23 @@
+.pink {
+    margin: 0 auto;
+    max-width: 1110px;
+}
+
+.pink-container {
+    display: flex;
+    margin: 0 auto;
+    max-width: 1117px;
+    padding: 50px;
+    height: 560px;
+    font-weight: 800;
+    font-size: 18px;
+    background-color: rgba(240, 99, 184, 0.15);
+    border-radius: 50px;
+}
+
+.pink-inner {
+    width: 475px;
+    padding-top: 80px;
+    padding-left: 80px;
+}
+

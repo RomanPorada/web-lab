@@ -1,0 +1,20 @@
+.hero {
+    background: url("/images/image1\ 1.svg") no-repeat right 30px bottom;
+}
+
+.hero__inner {
+    width: 645px;
+    padding-top: 130px;
+    padding-bottom: 80px;
+}
+.hero-title {
+    font-family: 'Helvetica';
+    font-weight: 700;
+    font-size: 80px;
+    line-height: 88px;
+    display: flex;
+    align-items: center;
+    color: #212353;
+}
+
+

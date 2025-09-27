@@ -1,0 +1,117 @@
+.features {
+    width: 1139px;
+    margin-left: 150px;
+    margin-top: 110px;
+    margin-bottom: 90px;
+}
+
+.features-header {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 584px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+}
+
+.features-paragraph {
+    font-family: 'Avenir';
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 160%;
+    color: #4B5D68;
+
+}
+
+.features-grid {
+    display: grid;
+    row-gap: 20px;
+    column-gap: 70px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+
+.features-title {
+    font-family: 'Helvetica';
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 130%;
+    color: #212353;
+
+
+}
+
+
+.features-item1 {
+    background: url("/images/elipse1.svg") no-repeat right 115px top 63px,
+        url("/images/vect3_1.svg") no-repeat right 25px top 25px,
+        url("/images/rect3_1.svg") no-repeat right top;
+
+    min-height: 358px;
+    margin-top: 45px;
+    display: flex;
+    align-items: center;
+}
+
+.features-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: revert;
+    width: 220px;
+    margin-left: 40px;
+}
+
+.features-btn {
+    font-family: 'Avenir';
+    font-weight: 900;
+    font-size: 16px;
+    line-height: 160%;
+    display: flex;
+    justify-content: space-between;
+    width: 125px;
+
+    align-items: revert;
+    letter-spacing: 0.005em;
+    color: #212353;
+    background: transparent;
+
+}
+
+.features-item2 {
+    background: url("/images/elipse2.svg") no-repeat right 35px bottom 63px,
+        url("/images/rect3_2.svg") no-repeat right top;
+    margin-top: 45px;
+    display: flex;
+    align-items: center;
+}
+
+.features-item3 {
+    background: url("/images/elipse3.svg") no-repeat right 30px top 33px,
+        url("/images/rect3_3.svg") no-repeat right top;
+    margin-top: 45px;
+    display: flex;
+    align-items: center;
+}
+
+.features-item4 {
+    background: url("/images/elipse4.svg") no-repeat right 115px top 33px,
+        url("/images/elipse3.svg") no-repeat right 25px bottom 2px,
+        url("/images/rect3_1.svg") no-repeat right top;
+    margin-top: 45px;
+    display: flex;
+    align-items: center;
+}
+
+
+.features-paragraph-small {
+    font-family: 'Avenir';
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 160%;
+    color: #4B5D68;
+
+
+}
