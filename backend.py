@@ -17,7 +17,6 @@ def home():
     """
 
 
-# ---------- HTML сторінки ----------
 @app.route('/atoms')
 def atoms_page():
     return send_from_directory('templates', 'atoms.html')
@@ -28,7 +27,6 @@ def molecules_page():
     return send_from_directory('templates', 'molecules.html')
 
 
-# ---------- API для атомів ----------
 @app.route('/get_atoms')
 def get_atoms():
     return jsonify(atoms)
@@ -58,7 +56,6 @@ def delete_atom(atom_id):
     return jsonify(success=True)
 
 
-# ---------- API для молекул ----------
 def get_formula(atom_list):
     counts = {}
     for atom in atom_list:

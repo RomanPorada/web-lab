@@ -60,7 +60,6 @@
                 list.appendChild(li);
             });
 
-            // підрахунок сумарної маси
             let total = filtered.reduce((sum, mol) => sum + mol.mass, 0);
             document.getElementById("totalMolMass").textContent = total.toFixed(2);
         }

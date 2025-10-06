@@ -43,7 +43,6 @@
                 list.appendChild(li);
             });
 
-            // підрахунок сумарної маси
             let total = filtered.reduce((sum, atom) => sum + atom.mass, 0);
             document.getElementById("totalMass").textContent = total.toFixed(2);
         }

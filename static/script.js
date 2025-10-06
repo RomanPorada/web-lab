@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadAtoms();
     loadMolecules();
 
-    // Форма для атомів
     document.getElementById("atomForm").addEventListener("submit", async (e) => {
         e.preventDefault();
         const atomData = {
@@ -29,14 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
         loadAtoms();
     });
 
-    // Сортування і пошук
     document.getElementById("sortAtoms").addEventListener("change", renderAtoms);
     document.getElementById("searchAtoms").addEventListener("input", renderAtoms);
     document.getElementById("sortMolecules").addEventListener("change", renderMolecules);
     document.getElementById("searchMolecules").addEventListener("input", renderMolecules);
 });
 
-// ----------- ATOMS ----------
 async function loadAtoms() {
     const res = await fetch(`${API_URL}/atoms`);
     atomsCache = await res.json();
@@ -72,11 +69,9 @@ function renderAtoms() {
         list.appendChild(div);
     });
 
-    // total mass
     const total = atoms.reduce((sum, a) => sum + a.mass, 0);
     document.getElementById("atomsTotal").textContent = `Загальна маса: ${total}`;
 
-    // update buttons for molecule builder
     const addArea = document.getElementById("atomsForMolecule");
     addArea.innerHTML = "";
     atoms.forEach(atom => {
@@ -95,7 +90,6 @@ function renderAtoms() {
     });
 }
 
-// ----------- MOLECULES ----------
 async function loadMolecules() {
     const res = await fetch(`${API_URL}/molecules`);
     moleculesCache = await res.json();
@@ -128,11 +122,9 @@ function renderMolecules() {
         list.appendChild(div);
     });
 
-    // total count
     document.getElementById("moleculesTotal").textContent = `Кількість молекул: ${molecules.length}`;
 }
 
-// ----------- SEQUENCE ----------
 function addAtomToSequence(symbol) {
     atomSequence.push(symbol);
     updateSequence();
@@ -201,7 +193,6 @@ async function combineMolecule() {
     loadMolecules();
 }
 
-// ----------- DELETE ----------
 async function deleteAtom(id) {
     await fetch(`${API_URL}/atoms/${id}`, {method: "DELETE"});
     loadAtoms();
