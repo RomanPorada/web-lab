@@ -1,0 +1,15 @@
+{
+  "atoms": [
+    {
+      "id": "6b17a076-5af3-4e2b-8694-8b3f6ce32847",
+      "name": "Hidrogen",
+      "chemical_record": "H",
+      "atomic_mass_unit": 1,
+      "protons_number": 1,
+      "neutrons_number": 1,
+      "electrons_number": 1,
+      "atom_tupe": "Stable"
+    }
+  ],
+  "molecules": []
+}

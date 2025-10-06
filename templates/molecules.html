@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Молекули</title>
+    <script>
+        let selectedAtoms = [];
+        let moleculesData = [];
+
+        async function loadAtoms() {
+            let res = await fetch("/get_atoms");
+            let atoms = await res.json();
+            let container = document.getElementById("atomsContainer");
+            container.innerHTML = "";
+            atoms.forEach(atom => {
+                let btn = document.createElement("button");
+                btn.textContent = `${atom.symbol}`;
+                btn.onclick = () => {
+                    selectedAtoms.push(atom.symbol);
+                    document.getElementById("chosenAtoms").textContent = selectedAtoms.join(" ");
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        async function loadMolecules() {
+            let res = await fetch("/get_molecules");
+            moleculesData = await res.json();
+            renderMolecules();
+        }
+
+        function renderMolecules() {
+            let list = document.getElementById("moleculesList");
+            list.innerHTML = "";
+            let search = document.getElementById("searchMol").value.toLowerCase();
+            let sortBy = document.getElementById("sortMol").value;
+
+            let filtered = moleculesData.filter(mol =>
+                mol.name.toLowerCase().includes(search) ||
+                mol.formula.toLowerCase().includes(search)
+            );
+
+            filtered.sort((a, b) => {
+                if (sortBy === "name") return a.name.localeCompare(b.name);
+                if (sortBy === "formula") return a.formula.localeCompare(b.formula);
+                if (sortBy === "mass") return a.mass - b.mass;
+                return 0;
+            });
+
+            filtered.forEach(mol => {
+                let li = document.createElement("li");
+                li.textContent = `${mol.name} | Формула: ${mol.formula} | Маса: ${mol.mass.toFixed(2)}`;
+                let delBtn = document.createElement("button");
+                delBtn.textContent = "❌";
+                delBtn.onclick = async () => {
+                    await fetch(`/delete_molecule/${mol.id}`, {method: "DELETE"});
+                    loadMolecules();
+                };
+                li.appendChild(delBtn);
+                list.appendChild(li);
+            });
+
+            let total = filtered.reduce((sum, mol) => sum + mol.mass, 0);
+            document.getElementById("totalMolMass").textContent = total.toFixed(2);
+        }
+
+        async function addMolecule() {
+            let name = document.getElementById("molName").value;
+            await fetch("/add_molecule", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({name: name, atoms: selectedAtoms})
+            });
+            selectedAtoms = [];
+            document.getElementById("chosenAtoms").textContent = "";
+            loadMolecules();
+        }
+
+        window.onload = () => {
+            loadAtoms();
+            loadMolecules();
+        };
+    </script>
+</head>
+<body>
+    <h1>Створення молекули</h1>
+    <input id="molName" placeholder="Назва молекули">
+    <div id="atomsContainer"></div>
+    <p>Вибрані атоми: <span id="chosenAtoms"></span></p>
+    <button onclick="addMolecule()">Додати молекулу</button>
+
+    <h2>Список молекул</h2>
+    <input id="searchMol" placeholder="Пошук..." oninput="renderMolecules()">
+    <select id="sortMol" onchange="renderMolecules()">
+        <option value="name">Сортувати за назвою</option>
+        <option value="formula">Сортувати за формулою</option>
+        <option value="mass">Сортувати за масою</option>
+    </select>
+
+    <ul id="moleculesList"></ul>
+    <p><b>Загальна маса:</b> <span id="totalMolMass">0</span></p>
+
+    <p><a href="/">⬅ Назад</a></p>
+</body>
+</html>
