@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Атоми і молекули</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input, select, button { margin: 5px; }
+    .list-item { margin: 3px 0; }
+    .container { margin-top: 20px; }
+    .inline { display: inline-block; margin-right: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Менеджер атомів і молекул</h1>
+
+  <h2>Створення атома</h2>
+  <input id="atomName" placeholder="Назва">
+  <input id="atomSymbol" placeholder="Символ (H, O...)">
+  <input id="atomMass" placeholder="Маса" type="number" step="0.01">
+  <input id="atomProtons" placeholder="Протони" type="number">
+  <input id="atomNeutrons" placeholder="Нейтрони" type="number">
+  <input id="atomElectrons" placeholder="Електрони" type="number">
+  <select id="atomState">
+    <option value="Stable">Stable</option>
+    <option value="Unstable">Unstable</option>
+  </select>
+  <button onclick="addAtom()">Додати атом</button>
+
+  <div class="container">
+    <h2>Атоми</h2>
+    <input id="searchAtoms" placeholder="Пошук атомів">
+    <ul id="atomList"></ul>
+  </div>
+
+  <div class="container">
+    <h2>Створення молекули</h2>
+    <input id="moleculeName" placeholder="Назва молекули">
+    <div id="atomButtons"></div>
+    <p>Список атомів: <span id="moleculePreview"></span></p>
+    <button onclick="addMolecule()">Об'єднати в молекулу</button>
+  </div>
+
+  <div class="container">
+    <h2>Молекули</h2>
+    <input id="searchMolecules" placeholder="Пошук молекул">
+    <select id="sortMolecules">
+      <option value="">Сортувати</option>
+      <option value="name">За назвою</option>
+      <option value="mass">За масою</option>
+    </select>
+    <ul id="moleculeList"></ul>
+    <p><b>Загальна маса:</b> <span id="totalMass">0</span></p>
+  </div>
+
+<script>
+let moleculeAtoms = [];
+let previewCounts = {};
+
+function fetchAtoms() {
+  fetch("/get_atoms")
+    .then(r => r.json())
+    .then(data => {
+      renderAtoms(data);
+      renderAtomButtons(data);
+    });
+}
+
+function fetchMolecules() {
+  fetch("/get_molecules")
+    .then(r => r.json())
+    .then(data => {
+      renderMolecules(data);
+    });
+}
+
+function addAtom() {
+  const atom = {
+    name: document.getElementById("atomName").value,
+    symbol: document.getElementById("atomSymbol").value,
+    mass: document.getElementById("atomMass").value,
+    protons: document.getElementById("atomProtons").value,
+    neutrons: document.getElementById("atomNeutrons").value,
+    electrons: document.getElementById("atomElectrons").value,
+    state: document.getElementById("atomState").value
+  };
+  fetch("/add_atom", {
+    method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(atom)
+  }).then(() => fetchAtoms());
+}
+
+function renderAtoms(atoms) {
+  let list = document.getElementById("atomList");
+  list.innerHTML = "";
+  let search = document.getElementById("searchAtoms").value.toLowerCase();
+  atoms.filter(a => a.name.toLowerCase().includes(search) || a.symbol.toLowerCase().includes(search))
+    .forEach(atom => {
+      let li = document.createElement("li");
+      li.className = "list-item";
+      li.textContent = `${atom.name} (${atom.symbol}), маса: ${atom.mass}`;
+      let btn = document.createElement("button");
+      btn.textContent = "❌";
+      btn.onclick = () => deleteAtom(atom.id);
+      li.appendChild(btn);
+      list.appendChild(li);
+    });
+}
+
+function renderAtomButtons(atoms) {
+  let div = document.getElementById("atomButtons");
+  div.innerHTML = "";
+  atoms.forEach(atom => {
+    let btn = document.createElement("button");
+    btn.textContent = atom.symbol + " +";
+    btn.onclick = () => {
+      moleculeAtoms.push(atom.symbol);
+      if (!previewCounts[atom.symbol]) previewCounts[atom.symbol] = [];
+      if (previewCounts[atom.symbol].length === 0 || previewCounts[atom.symbol][previewCounts[atom.symbol].length-1].next)
+        previewCounts[atom.symbol].push({count:1, next:false});
+      else previewCounts[atom.symbol][previewCounts[atom.symbol].length-1].count++;
+      renderPreview();
+    };
+    div.appendChild(btn);
+  });
+}
+
+function renderPreview() {
+  let preview = document.getElementById("moleculePreview");
+  preview.innerHTML = moleculeAtoms.join(" ");
+}
+
+function addMolecule() {
+  let name = document.getElementById("moleculeName").value;
+  fetch("/add_molecule", {
+    method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({name: name, atoms: moleculeAtoms})
+  }).then(() => {
+    moleculeAtoms = [];
+    previewCounts = {};
+    document.getElementById("moleculePreview").innerHTML = "";
+    fetchMolecules();
+  });
+}
+
+function renderMolecules(molecules) {
+  let list = document.getElementById("moleculeList");
+  list.innerHTML = "";
+  let search = document.getElementById("searchMolecules").value.toLowerCase();
+  molecules = molecules.filter(m => m.name.toLowerCase().includes(search) || m.formula.toLowerCase().includes(search));
+
+  let sort = document.getElementById("sortMolecules").value;
+  if (sort === "name") molecules.sort((a, b) => a.name.localeCompare(b.name));
+  if (sort === "mass") molecules.sort((a, b) => a.mass - b.mass);
+
+  let totalMass = 0;
+  molecules.forEach(molecule => {
+    totalMass += molecule.mass;
+    let li = document.createElement("li");
+    li.className = "list-item";
+    li.textContent = `${molecule.name} (${molecule.formula}), маса: ${molecule.mass.toFixed(2)}`;
+    let btn = document.createElement("button");
+    btn.textContent = "❌";
+    btn.onclick = () => deleteMolecule(molecule.id);
+    li.appendChild(btn);
+    list.appendChild(li);
+  });
+  document.getElementById("totalMass").textContent = totalMass.toFixed(2);
+}
+
+function deleteAtom(id) {
+  fetch("/delete_atom/" + id, {method: "DELETE"}).then(() => fetchAtoms());
+}
+
+function deleteMolecule(id) {
+  fetch("/delete_molecule/" + id, {method: "DELETE"}).then(() => fetchMolecules());
+}
+
+document.getElementById("searchAtoms").addEventListener("input", fetchAtoms);
+document.getElementById("searchMolecules").addEventListener("input", fetchMolecules);
+document.getElementById("sortMolecules").addEventListener("change", fetchMolecules);
+
+fetchAtoms();
+fetchMolecules();
+</script>
+</body>
+</html>
