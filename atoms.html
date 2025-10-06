@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Атоми</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <h1>Створення атомів</h1>
+
+  <div class="form">
+    <input id="atom-name" placeholder="Назва">
+    <input id="atom-symbol" placeholder="Символ">
+    <input id="atom-mass" type="number" placeholder="Маса">
+    <input id="atom-protons" type="number" placeholder="Протони">
+    <input id="atom-neutrons" type="number" placeholder="Нейтрони">
+    <input id="atom-electrons" type="number" placeholder="Електрони">
+    <select id="atom-state">
+      <option>Stable</option>
+      <option>Unstable</option>
+    </select>
+    <button onclick="addAtom()">➕ Додати атом</button>
+  </div>
+
+  <div class="controls">
+    <input id="atom-search" placeholder="🔍 Пошук..." oninput="renderAtoms()">
+    <select id="atom-sort" onchange="renderAtoms()">
+      <option value="name">Сортувати за назвою</option>
+      <option value="symbol">Сортувати за символом</option>
+      <option value="mass">Сортувати за масою</option>
+    </select>
+  </div>
+
+  <h2>Список атомів</h2>
+  <ul id="atomsList" class="list"></ul>
+  <p><b>Загальна маса:</b> <span id="totalMass">0</span></p>
+
+  <a href="index.html" class="btn">⬅ Назад</a>
+</body>
+</html>

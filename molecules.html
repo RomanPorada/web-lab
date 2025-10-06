@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Молекули</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <h1>Створення молекул</h1>
+
+  <div class="form">
+    <input id="mol-name" placeholder="Назва молекули">
+    <div id="atomsContainer"></div>
+    <p>Вибрані атоми: <span id="chosenAtoms"></span></p>
+    <button onclick="addMolecule()">💧 Створити молекулу</button>
+  </div>
+
+  <div class="controls">
+    <input id="mol-search" placeholder="🔍 Пошук..." oninput="renderMolecules()">
+    <select id="mol-sort" onchange="renderMolecules()">
+      <option value="name">Сортувати за назвою</option>
+      <option value="formula">Сортувати за формулою</option>
+      <option value="mass">Сортувати за масою</option>
+    </select>
+  </div>
+
+  <h2>Список молекул</h2>
+  <ul id="moleculesList" class="list"></ul>
+  <p><b>Загальна маса:</b> <span id="totalMolMass">0</span></p>
+
+  <a href="index.html" class="btn">⬅ Назад</a>
+</body>
+</html>
+    
