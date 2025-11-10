@@ -1,0 +1,96 @@
+.main-container {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #dbeeff;
+  min-height: 100vh;
+}
+
+.main-title {
+  font-size: 32px;
+  color: #004aad;
+  margin-bottom: 25px;
+}
+
+.main-title span {
+  font-weight: bold;
+}
+
+.toggle-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.toggle-buttons button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #9ec9ff;
+  color: #004aad;
+  font-weight: 600;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.toggle-buttons button.active {
+  background: #0056d1;
+  color: #fff;
+}
+
+.toggle-buttons button .icon {
+  font-size: 18px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  padding: 10px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card h3 {
+  color: #004aad;
+  margin-bottom: 6px;
+  font-size: 22px;
+}
+
+.card p {
+  margin: 4px 0;
+  color: #333;
+}
+
+@media (max-width: 600px) {
+  .main-title {
+    font-size: 24px;
+  }
+
+  .toggle-buttons button {
+    font-size: 14px;
+    padding: 8px 14px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+}
