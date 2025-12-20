@@ -1,75 +1,96 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Filters from "../../components/Filters/Filters";
+import CardItem from "../../components/molecules/CardItem/CardItem";
+import Input from "../../components/atoms/Input/Input";
+import Button from "../../components/atoms/Button/Button";
+import Loader from "../../components/Loader/Loader";
+import { fetchAtoms } from "../../api/atomsApi";
+import { fetchMolecules } from "../../api/moleculesApi";
 import "./Home.css";
-import { FaAtom } from "react-icons/fa";
-import { GiMolecule } from "react-icons/gi";
 
 export default function Home() {
-  const [view, setView] = useState("atoms");
+  const [tab, setTab] = useState("atom");
+  const [search, setSearch] = useState("");
 
-  const atoms = [
-    { name: "Гідроген", symbol: "H", mass: 1.008 },
-    { name: "Гелій", symbol: "He", mass: 4.0026 },
-    { name: "Літій", symbol: "Li", mass: 6.94 },
-    { name: "Бор", symbol: "B", mass: 10.81 },
-    { name: "Карбон", symbol: "C", mass: 12.011 },
-    { name: "Нітроген", symbol: "N", mass: 14.007 },
-    { name: "Оксиген", symbol: "O", mass: 15.999 },
-    { name: "Флуор", symbol: "F", mass: 18.998 },
-    { name: "Неон", symbol: "Ne", mass: 20.180 },
-    { name: "Натрій", symbol: "Na", mass: 22.990 },
-  ];
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const molecules = [
-    { name: "Вода", formula: "H₂O" },
-    { name: "Вуглекислий газ", formula: "CO₂" },
-    { name: "Кисень", formula: "O₂" },
-    { name: "Озон", formula: "O₃" },
-    { name: "Метан", formula: "CH₄" },
-    { name: "Етанол", formula: "C₂H₅OH" },
-    { name: "Сахароза", formula: "C₁₂H₂₂O₁₁" },
-    { name: "Аміак", formula: "NH₃" },
-    { name: "Глюкоза", formula: "C₆H₁₂O₆" },
-    { name: "Сірководень", formula: "H₂S" },
-  ];
+  const [selectedAtomTypes, setSelectedAtomTypes] = useState([]);
+  const [atomMassRange, setAtomMassRange] = useState([0, 300]);
+  const [selectedMolPhases, setSelectedMolPhases] = useState([]);
+  const [molMassRange, setMolMassRange] = useState([0, 1000]);
 
-  const list = view === "atoms" ? atoms : molecules;
+  const [count, setCount] = useState(6);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
+      try {
+        if (tab === "atom") {
+          const params = {};
+          if (selectedAtomTypes.length) params.types = selectedAtomTypes.join(",");
+          if (atomMassRange?.[0]) params.massMin = atomMassRange[0];
+          if (atomMassRange?.[1]) params.massMax = atomMassRange[1];
+          if (search) params.q = search;
+          const resp = await fetchAtoms(params);
+          if (!cancelled) setItems(resp.data || []);
+        } else {
+          const params = {};
+          if (selectedMolPhases.length) params.phases = selectedMolPhases.join(",");
+          if (molMassRange?.[0]) params.molarMin = molMassRange[0];
+          if (molMassRange?.[1]) params.molarMax = molMassRange[1];
+          if (search) params.q = search;
+          const resp = await fetchMolecules(params);
+          if (!cancelled) setItems(resp.data || []);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, [tab, search, selectedAtomTypes, atomMassRange, selectedMolPhases, molMassRange]);
 
   return (
-    <div className="main-container">
-      <h1 className="main-title">
-        Лабораторна №6 — <span>Атоми та Молекули</span>
-      </h1>
-
-      <div className="toggle-buttons">
-        <button
-          className={view === "atoms" ? "active" : ""}
-          onClick={() => setView("atoms")}
-        >
-          <FaAtom className="icon" /> Атоми
-        </button>
-        <button
-          className={view === "molecules" ? "active" : ""}
-          onClick={() => setView("molecules")}
-        >
-          <GiMolecule className="icon" /> Молекули
-        </button>
+    <div className="container home-page row">
+      <div style={{ flex: "0 0 260px" }}>
+        <Filters
+          kind={tab}
+          atomTypes={Array.from(new Set())}
+          selectedAtomTypes={selectedAtomTypes}
+          toggleAtomType={(t)=> setSelectedAtomTypes(s => s.includes(t) ? s.filter(x=>x!==t) : [...s,t])}
+          atomMassRange={atomMassRange}
+          setAtomMassRange={setAtomMassRange}
+          molPhases={Array.from(new Set())}
+          selectedMolPhases={selectedMolPhases}
+          toggleMolPhase={(p)=> setSelectedMolPhases(s => s.includes(p) ? s.filter(x=>x!==p) : [...s,p])}
+          molMassRange={molMassRange}
+          setMolMassRange={setMolMassRange}
+          onReset={()=>{ setSelectedAtomTypes([]); setAtomMassRange([0,300]); setSelectedMolPhases([]); setMolMassRange([0,1000]); setSearch("")}}
+        />
       </div>
 
-      <div className="cards">
-        {view === "atoms"
-          ? list.map((atom, i) => (
-              <div className="card" key={i}>
-                <h3>{atom.symbol}</h3>
-                <p>{atom.name}</p>
-                <p>Атомна маса: {atom.mass}</p>
-              </div>
-            ))
-          : list.map((mol, i) => (
-              <div className="card" key={i}>
-                <h3>{mol.formula}</h3>
-                <p>{mol.name}</p>
-              </div>
-            ))}
+      <div style={{ flex: 1 }}>
+        <div className="tabs">
+          <button className={tab==="atom"?"tab active":"tab"} onClick={()=>setTab("atom")}>Атоми</button>
+          <button className={tab==="molecule"?"tab active":"tab"} onClick={()=>setTab("molecule")}>Молекули</button>
+        </div>
+
+        <div style={{display:'flex',gap:12,marginTop:12,marginBottom:18}}>
+          <Input placeholder={`Пошук у ${tab==="atom"?"атомах":"молекулах"}...`} value={search} onChange={e=>setSearch(e.target.value)} />
+        </div>
+
+        {loading ? <Loader /> : (
+          <>
+            <div className="grid">
+              {items.slice(0, count).map(it => <CardItem key={it.id} item={it} />)}
+            </div>
+            {items.length > count && <div style={{textAlign:"center",marginTop:12}}><Button onClick={()=>setCount(c=>c+6)}>Показати ще</Button></div>}
+          </>
+        )}
       </div>
     </div>
   );
