@@ -22,7 +22,6 @@ export default function LoginPage() {
       const response = await loginUser(email, password);
       
       if (response.success) {
-        // 1. Load user's saved cart from localStorage BEFORE dispatching user
         const userCartKey = `redux_cart_${response.user.id}`;
         let savedCart = {};
         try {
@@ -32,15 +31,11 @@ export default function LoginPage() {
           savedCart = {};
         }
 
-        // 2. Set user to Redux (triggers store.subscribe)
         dispatch(setUser(response.user));
 
-        // 3. Immediately set cart (still within same function, user already dispatched)
-        // Using setTimeout minimal delay to ensure Redux updates before cart is loaded
         setTimeout(() => {
           dispatch(setCart(savedCart || {}));
           
-          // Redirect after cart is set
           navigate("/");
         }, 10);
       }

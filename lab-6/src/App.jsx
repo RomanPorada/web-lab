@@ -17,7 +17,6 @@ import Footer from "./components/Footer/Footer";
 export default function App() {
   const dispatch = useDispatch();
 
-  // Initialize user from localStorage on app load
   useEffect(() => {
     const userEmail = localStorage.getItem("user_email");
     const userId = localStorage.getItem("user_id");

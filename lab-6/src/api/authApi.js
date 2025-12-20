@@ -1,4 +1,3 @@
-// Mocked auth API with persistent (localStorage) user store
 const USERS_KEY = "mock_users";
 
 function loadUsers() {
@@ -25,7 +24,7 @@ function isValidEmailFormat(email) {
   if (!domain || domain.indexOf('.') === -1) return false;
   const parts = domain.split('.');
   const last = parts[parts.length - 1];
-  if (!last || last.length < 2) return false; // require at least 2 characters after final dot
+  if (!last || last.length < 2) return false; 
   return true;
 }
 

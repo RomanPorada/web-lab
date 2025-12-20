@@ -15,27 +15,21 @@ export default function Header() {
   const isAuthPage = loc.pathname === "/login" || loc.pathname === "/register";
 
   const handleLogout = () => {
-    // Persist current cart explicitly under the user's key to avoid race conditions
     try {
       if (user && user.id) {
         const cartKey = `redux_cart_${user.id}`;
         localStorage.setItem(cartKey, JSON.stringify(cart || {}));
       }
     } catch (e) {
-      // ignore
     }
 
-    // Clear Redux user + cart state for UI
     dispatch(logoutUser());
     dispatch(clearCart());
 
-    // Remove stored current-user marker
     localStorage.removeItem("redux_user");
-    // remove legacy keys if present
     localStorage.removeItem("user_email");
     localStorage.removeItem("user_id");
 
-    // Redirect to login
     navigate("/login");
   };
 

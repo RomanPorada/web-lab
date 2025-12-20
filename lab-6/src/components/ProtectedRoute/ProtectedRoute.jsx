@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 export default function ProtectedRoute({ children }) {
   const user = useSelector((state) => state.user);
   
-  // Check both Redux state and localStorage
   const isAuthenticated = user || localStorage.getItem("user_email");
 
   if (!isAuthenticated) {
